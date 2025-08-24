@@ -50,6 +50,9 @@ x-airflow-common: &airflow-common
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.4}
   # build: .
+  networks:
+    - default
+    - mlops_study_network
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
@@ -60,6 +63,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: "http://airflow-apiserver:8080/execution/"
+    AIRFLOW__CORE__TEST_CONNECTION: "Enabled"
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
     # See https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
@@ -339,3 +343,8 @@ services:
 
 volumes:
   postgres-db-volume:
+
+networks:
+  default:
+  mlops_study_network:
+    external: true
