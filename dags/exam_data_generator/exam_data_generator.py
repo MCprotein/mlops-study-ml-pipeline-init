@@ -2,7 +2,7 @@ from typing import List
 from datetime import datetime
 
 from airflow import DAG
-from airflow.models import Variable
+# from airflow.models import Variable  # Variable 사용 안하므로 주석처리
 from airflow.decorators import task
 from airflow.models.param import Param
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
@@ -10,8 +10,9 @@ from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from support.date_values import DateValues, DateFormat
 
 conn_id = "feature_store"
-airflow_dags_path = Variable.get("AIRFLOW_DAGS_PATH")
-sql_file_path = f"{airflow_dags_path}/features/exam_data_generator/recipes/create_exam_data.sql"
+# airflow_dags_path = Variable.get("AIRFLOW_DAGS_PATH")
+airflow_dags_path = "/opt/airflow/dags"  # 기본 경로 사용
+sql_file_path = f"{airflow_dags_path}/exam_data_generator/recipes/create_exam_data.sql"
 base_day = DateValues.get_before_one_day()
 
 
@@ -73,7 +74,7 @@ with DAG(dag_id="exam_data_generator",
          }
          ) as dag:
     data_generate = SQLExecuteQueryOperator.partial(
-        task_id=f"실습_데이터_생성",
+        task_id="실습_데이터_생성",  # f-string 불필요
         conn_id=conn_id,
         sql=read_sql_file(sql_file_path),
         split_statements=True
