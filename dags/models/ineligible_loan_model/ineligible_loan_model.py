@@ -6,7 +6,7 @@ from airflow import DAG
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
-from support.callback_function import failure_callback, success_callback
+from dags.support.callback_function import failure_callback, success_callback
 
 local_timezone = pendulum.timezone("Asia/Seoul")
 conn_id = "feature_store"

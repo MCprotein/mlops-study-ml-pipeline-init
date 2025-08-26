@@ -1,5 +1,8 @@
 import unittest
 
+from airflow.sdk.bases.operator import BaseOperator
+from airflow.sdk.definitions.context import Context
+
 
 class TestIneligibleLoanModel(unittest.TestCase):
     @classmethod
@@ -11,7 +14,13 @@ class TestIneligibleLoanModel(unittest.TestCase):
             email = "mlops.study@gmail.com"
             owner = "mlops.study"
 
-        cls.context = {"task": ContextTask()}
+        operator = BaseOperator(
+            task_id="test", email="mlops.study@gmail.com", owner="mlops.study"
+        )
+
+        # cls.context = {"task": ContextTask()}
+        context = Context(task=operator)
+        cls.context = context
 
     def test_data_extract(self):
         # Given
