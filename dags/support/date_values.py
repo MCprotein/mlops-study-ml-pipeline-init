@@ -1,7 +1,8 @@
-from enum import Enum
-from pytz import timezone
 from datetime import datetime, timedelta
+from enum import Enum
+
 from dateutil.relativedelta import relativedelta
+from pytz import timezone
 
 
 class DateFormat(Enum):
@@ -12,7 +13,6 @@ class DateFormat(Enum):
 
 
 class DateValues:
-
     @staticmethod
     def get_current_date():
         """
@@ -21,7 +21,7 @@ class DateValues:
         :returns: current date
         :rtype: str
         """
-        return datetime.now(timezone('Asia/Seoul')).strftime(DateFormat.yyyyMMdd.value)
+        return datetime.now(timezone("Asia/Seoul")).strftime(DateFormat.yyyyMMdd.value)
 
     @staticmethod
     def get_before_60_days():
@@ -31,7 +31,9 @@ class DateValues:
         :returns: date of yesterday
         :rtype: str
         """
-        return (datetime.now(timezone('Asia/Seoul')) - relativedelta(days=1)).strftime(DateFormat.yyyyMMdd.value)
+        return (datetime.now(timezone("Asia/Seoul")) - relativedelta(days=1)).strftime(
+            DateFormat.yyyyMMdd.value
+        )
 
     @staticmethod
     def get_before_one_day():
@@ -41,7 +43,9 @@ class DateValues:
         :returns: date of yesterday
         :rtype: str
         """
-        return (datetime.now(timezone('Asia/Seoul')) - relativedelta(days=1)).strftime(DateFormat.yyyyMMdd.value)
+        return (datetime.now(timezone("Asia/Seoul")) - relativedelta(days=1)).strftime(
+            DateFormat.yyyyMMdd.value
+        )
 
     @staticmethod
     def get_before_one_month(base_day: str = None):
@@ -56,9 +60,13 @@ class DateValues:
             day_len = 8
             if len(base_day) not in [month_len, day_len]:
                 raise ValueError("Length of base_day is not allowed.")
-            return (datetime.strptime((base_day[:6] + "01"), DateFormat.yyyyMMdd.value) - relativedelta(
-                months=1)).strftime(DateFormat.yyyyMM.value)
-        return (datetime.now(timezone('Asia/Seoul')) - relativedelta(months=1)).strftime(DateFormat.yyyyMM.value)
+            return (
+                datetime.strptime((base_day[:6] + "01"), DateFormat.yyyyMMdd.value)
+                - relativedelta(months=1)
+            ).strftime(DateFormat.yyyyMM.value)
+        return (
+            datetime.now(timezone("Asia/Seoul")) - relativedelta(months=1)
+        ).strftime(DateFormat.yyyyMM.value)
 
     @staticmethod
     def get_date_list(start_day, end_day):
@@ -81,10 +89,16 @@ class DateValues:
             start_datetime = datetime.strptime(start_day, DateFormat.yyyyMMdd.value)
             end_datetime = datetime.strptime(end_day, DateFormat.yyyyMMdd.value)
             for i in range((end_datetime - start_datetime).days + 1):
-                datelist.append((datetime.strptime(start_day, DateFormat.yyyyMMdd.value) + timedelta(days=i)).strftime(
-                    DateFormat.yyyyMMdd.value))
+                datelist.append(
+                    (
+                        datetime.strptime(start_day, DateFormat.yyyyMMdd.value)
+                        + timedelta(days=i)
+                    ).strftime(DateFormat.yyyyMMdd.value)
+                )
             return datelist
         except ValueError:
-            raise ValueError("You have entered a date in an incorrect format, "
-                             "so please double-check the date you entered.\n"
-                             f"The dates you entered are as follows: start_day = {start_day}, end_day = {end_day}")
+            raise ValueError(
+                "You have entered a date in an incorrect format, "
+                "so please double-check the date you entered.\n"
+                f"The dates you entered are as follows: start_day = {start_day}, end_day = {end_day}"
+            )

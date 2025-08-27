@@ -7,7 +7,7 @@ from dags.support.date_values import DateValues
 class TestIneligibleLoanModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.base_day = "20250826"
+        cls.base_day = DateValues.get_before_one_day()
 
         cls.context = Mock(
             task={"email": "mlops.study@gmail.com", "owner": "mlops.study"}

@@ -23,7 +23,7 @@ test:
 
 # Run specific test file
 test-unit:
-	docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/models/ineligible_loan_model/test_ineligible_loan_model.py -v"
+	docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/models/ineligible_loan_model/test_ineligible_loan_model.py -v -s"
 
 # Open shell in container
 shell:
