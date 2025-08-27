@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import Mock
 
 from dags.support.date_values import DateValues
+from tests import MockContext
 
 
 class TestIneligibleLoanModel(unittest.TestCase):
@@ -9,9 +10,7 @@ class TestIneligibleLoanModel(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.base_day = DateValues.get_before_one_day()
 
-        cls.context = Mock(
-            task={"email": "mlops.study@gmail.com", "owner": "mlops.study"}
-        )
+        cls.context = MockContext()
 
     def test_data_extract(self):
         # Given
