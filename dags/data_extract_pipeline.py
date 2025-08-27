@@ -3,8 +3,7 @@ from datetime import datetime
 import pendulum
 from airflow import DAG
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-
-from dags.support.callback_function import failure_callback, success_callback
+from support.callback_function import failure_callback, success_callback
 
 local_timezone = pendulum.timezone("Asia/Seoul")
 conn_id = "feature_store"

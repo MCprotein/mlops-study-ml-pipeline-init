@@ -1,29 +1,21 @@
 import unittest
+from unittest.mock import Mock
 
-from airflow.sdk.bases.operator import BaseOperator
-from airflow.sdk.definitions.context import Context
+from dags.support.date_values import DateValues
 
 
 class TestIneligibleLoanModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        # Common Given
         cls.base_day = "20250826"
 
-        class ContextTask:
-            email = "mlops.study@gmail.com"
-            owner = "mlops.study"
-
-        operator = BaseOperator(
-            task_id="test", email="mlops.study@gmail.com", owner="mlops.study"
+        cls.context = Mock(
+            task={"email": "mlops.study@gmail.com", "owner": "mlops.study"}
         )
-
-        # cls.context = {"task": ContextTask()}
-        context = Context(task=operator)
-        cls.context = context
 
     def test_data_extract(self):
         # Given
+
         import dags.models.ineligible_loan_model.ineligible_loan_model as model
 
         # When

@@ -22,6 +22,7 @@ mlops_study_ml_pipeline_init.egg-info/dependency_links.txt
 mlops_study_ml_pipeline_init.egg-info/requires.txt
 mlops_study_ml_pipeline_init.egg-info/top_level.txt
 tests/__init__.py
+tests/conftest.py
 tests/models/__init__.py
 tests/models/ineligible_loan_model/__init__.py
 tests/models/ineligible_loan_model/test_ineligible_loan_model.py
