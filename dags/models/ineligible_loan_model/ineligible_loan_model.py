@@ -10,6 +10,9 @@ from support.callback_function import failure_callback, success_callback
 
 local_timezone = pendulum.timezone("Asia/Seoul")
 conn_id = "feature_store"
+model_name = "ineligible_loan_model"
+model_version = "1.0.0"
+
 
 # Get the directory where this DAG file is located
 dag_dir = Path(__file__).parent

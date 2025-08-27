@@ -1,8 +1,15 @@
+import os
 import unittest
+from pathlib import Path
 from unittest.mock import Mock
 
 from dags.support.date_values import DateValues
 from tests import MockContext
+
+os.environ["FEATURE_STORE_URL"] = "mysql://root:root@mariadb/mlops"
+os.environ["MODEL_OUTPUT_HOME"] = str(
+    Path(__file__).parent.parent.parent.parent / "dags/models/ineligible_loan_model"
+)
 
 
 class TestIneligibleLoanModel(unittest.TestCase):
@@ -25,6 +32,22 @@ class TestIneligibleLoanModel(unittest.TestCase):
             ),
         )
         model.data_extract.execute(self.context)
+
+    def test_data_preparation(self):
+        # Given
+        import dags.models.ineligible_loan_model.ineligible_loan_model as model
+        from dags.models.ineligible_loan_model.data_preparation.preparation import (
+            Preparation,
+        )
+
+        # When
+        preparation = Preparation(
+            model_name=model.model_name,
+            model_version=model.model_version,
+            base_day=self.base_day,
+        )
+
+        preparation.preprocessing()
 
 
 if __name__ == "__main__":
