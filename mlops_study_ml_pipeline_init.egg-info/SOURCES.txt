@@ -10,6 +10,9 @@ dags/models/__init__.py
 dags/models/ineligible_loan_model/__init__.py
 dags/models/ineligible_loan_model/ineligible_loan_model.py
 dags/models/ineligible_loan_model/data_extract/__init__.py
+dags/models/ineligible_loan_model/data_preparation/__init__.py
+dags/models/ineligible_loan_model/data_preparation/preparation.py
+dags/models/ineligible_loan_model/model_output/__init__.py
 dags/support/__init__.py
 dags/support/callback_function.py
 dags/support/date_values.py
@@ -22,7 +25,6 @@ mlops_study_ml_pipeline_init.egg-info/dependency_links.txt
 mlops_study_ml_pipeline_init.egg-info/requires.txt
 mlops_study_ml_pipeline_init.egg-info/top_level.txt
 tests/__init__.py
-tests/conftest.py
 tests/models/__init__.py
 tests/models/ineligible_loan_model/__init__.py
 tests/models/ineligible_loan_model/test_ineligible_loan_model.py

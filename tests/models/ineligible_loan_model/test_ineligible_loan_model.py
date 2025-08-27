@@ -1,7 +1,6 @@
 import os
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
 
 from dags.support.date_values import DateValues
 from tests import MockContext
