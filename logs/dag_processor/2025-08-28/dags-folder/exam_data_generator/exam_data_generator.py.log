@@ -922,3 +922,8 @@
 {"timestamp":"2025-08-28T09:16:49.984708","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
 {"timestamp":"2025-08-28T09:17:20.476627","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
 {"timestamp":"2025-08-28T09:17:51.038068","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-08-28T09:18:21.609210","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-08-28T09:18:52.179434","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-08-28T09:19:22.743775","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-08-28T09:19:53.426679","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-08-28T09:20:24.073319","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/exam_data_generator/exam_data_generator.py","logger":"airflow.models.dagbag.DagBag"}

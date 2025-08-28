@@ -150,6 +150,59 @@ class Preparation:
         loan_df = self._transform_to_one_hot_encoding(loan_df)
         self._transform_to_label_encoding(loan_df)
 
+        """
+        Standardization(표준화)
+        - standard_scalers 불러오기
+        - 훈련된 인코더를 사용하여 데이터를 표준화하고 기존 컬럼에 저장한다.
+        * 언제 정규화를 하고 언제 표준화를 할까?
+        - 명확한 답은 없다.
+        - 통상적으로는 표준화를 통해 이상치를 제거하고,
+          정규화하여 상대적 크기에 대한 영향력을 줄인다.
+        """
+        from sklearn.preprocessing import StandardScaler
+
+        numeric_features = [
+            "applicant_income",
+            "coapplicant_income",
+            "loan_amount_term",
+        ]
+
+        # standard_scalers 불러오기
+        standard_scalers: Dict[str, StandardScaler] = joblib.load(
+            f"{model_output_home}/model_output/standard_scalers.joblib"
+        )
+
+        # numeric_features 표준화
+        for numeric_feature in numeric_features:
+            standard_scaler = standard_scalers[numeric_feature]
+            print(f"numeric_feature = {numeric_feature}")
+
+            loan_df[numeric_feature] = standard_scaler.transform(
+                loan_df[[numeric_feature]]
+            )
+
+        """
+        Normalization (정규화)
+        - min_max_scalers 불러오기
+        - 훈련된 인코더를 사용하여 데이터를 표준화하고 기존 컬럼에 저장한다.
+        """
+
+        from sklearn.preprocessing import MinMaxScaler
+
+        # min_max_scalers 불러오기
+        min_max_scalers: Dict[str, MinMaxScaler] = joblib.load(
+            f"{model_output_home}/model_output/min_max_scalers.joblib"
+        )
+
+        # numeric_features 정규화
+        print("numeric_features 정규화")
+        for numeric_feature in numeric_features:
+            min_max_scaler = min_max_scalers[numeric_feature]
+
+            loan_df[numeric_feature] = min_max_scaler.transform(
+                loan_df[[numeric_feature]]
+            )
+
         print("loan_df 결과 저장 예정")
         """
         피처 데이터 저장
