@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Dict
 
 import joblib
@@ -6,19 +7,27 @@ import pandas as pd
 
 feature_store_url = os.getenv("FEATURE_STORE_URL", "")
 model_output_home = os.getenv("MODEL_OUTPUT_HOME", "")
+mlops_data_store = os.getenv("MLOPS_DATA_STORE", "")
 
 
 class Preparation:
     _model_name: str
     _model_version: str
     _base_day: str
+    _data_prepartion_path: str
 
     def __init__(self, model_name: str, model_version: str, base_day: str) -> None:
-        self.model_name = model_name
+        self._model_name = model_name
         self._model_version = model_version
         self._base_day = base_day
+        self._data_prepartion_path = f"{mlops_data_store}/data_preparation/{self._model_name}/{self._model_version}/{self._base_day}"
+        self._makedir()
 
-    def preprocessing(self):
+    def _makedir(self):
+        if not os.path.isdir(self._data_prepartion_path):
+            os.makedirs(self._data_prepartion_path)
+
+    def _get_features_extracted(self):
         ## 1. 데이터 추출
         from sqlalchemy import create_engine, text
         from sqlalchemy.engine import Engine
@@ -33,9 +42,10 @@ class Preparation:
         """
         with engine.connect() as conn:
             loan_df = pd.read_sql(text(sql), con=conn)
+        return loan_df
 
-        # 2. 데이터 전처리
-
+    @staticmethod
+    def _fill_na_to_default(loan_df: pd.DataFrame):
         """
         결측치(N/A) 제거
         - family_dependents와 loan_amount_term의 결측치를 채우는 작업을 수행한다.
@@ -43,13 +53,14 @@ class Preparation:
         - loan_amount_term은 데이터 과학자가 대출서비스에서 발생하는 대출기간의 기본값은 60개월로 설정하므로
           결측값을 60으로 채웠다.
         """
-
         # family_dependents
         loan_df["family_dependents"].fillna("0", inplace=True)
 
         # loan_amount_term
         loan_df["loan_amount_term"].fillna("60", inplace=True)
 
+    @staticmethod
+    def _replace_category_to_numeric(loan_df: pd.DataFrame):
         """
         Replace 변환
         - 범주형(Categorical) 변수 중 gender, education을 숫자형 변수로 변환한다.
@@ -65,6 +76,8 @@ class Preparation:
             {"Graduate": 1, "Not Graduate": 0}
         )
 
+    @staticmethod
+    def _transform_to_one_hot_encoding(loan_df):
         """
         원핫 인코딩 (One-Hot Encoding)
         - one_hot_encoder 불러오기
@@ -99,7 +112,10 @@ class Preparation:
 
         # 기존 피처 컬럼 삭제
         loan_df = loan_df.drop(columns=one_hot_features)
+        return loan_df
 
+    @staticmethod
+    def _transform_to_label_encoding(loan_df: pd.DataFrame):
         """
         라벨 인코딩 (Label Encoding)
         - label_encoders 불러오기
@@ -123,3 +139,38 @@ class Preparation:
             loan_df[categorical_feature] = label_encoder.transform(
                 loan_df[categorical_feature]
             )
+
+    def preprocessing(self):
+        loan_df = self._get_features_extracted()
+
+        # 2. 데이터 전처리
+
+        self._fill_na_to_default(loan_df)
+        self._replace_category_to_numeric(loan_df)
+        loan_df = self._transform_to_one_hot_encoding(loan_df)
+        self._transform_to_label_encoding(loan_df)
+
+        print("loan_df 결과 저장 예정")
+        """
+        피처 데이터 저장
+        """
+        feature_file_name = f"{self._model_name}_{self._model_version}.csv"
+        loan_df.to_csv(f"{self._data_prepartion_path}/{feature_file_name}", index=False)
+
+
+if __name__ == "__main__":
+    print(f"sys.argv = {sys.argv}")
+    if len(sys.argv) != 4:
+        print("Insufficient arguments.")
+        sys.exit(1)
+    _model_name = sys.argv[1]
+    _model_version = sys.argv[2]
+    _base_day = sys.argv[3]
+
+    print(f"_model_name = {_model_name}")
+    print(f"_model_version={_model_version}")
+    print(f"_base_day={_base_day}")
+
+    preparation = Preparation(
+        model_name=_model_name, model_version=_model_version, base_day=_base_day
+    )
