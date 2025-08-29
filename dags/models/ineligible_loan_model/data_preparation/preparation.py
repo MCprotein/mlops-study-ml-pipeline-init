@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Dict
+from typing import Dict, List
 
 import joblib
 import pandas as pd
@@ -140,16 +140,10 @@ class Preparation:
                 loan_df[categorical_feature]
             )
 
-    def preprocessing(self):
-        loan_df = self._get_features_extracted()
-
-        # 2. 데이터 전처리
-
-        self._fill_na_to_default(loan_df)
-        self._replace_category_to_numeric(loan_df)
-        loan_df = self._transform_to_one_hot_encoding(loan_df)
-        self._transform_to_label_encoding(loan_df)
-
+    @staticmethod
+    def _transform_to_standard_scale(
+        loan_df: pd.DataFrame, numeric_features: List[str]
+    ):
         """
         Standardization(표준화)
         - standard_scalers 불러오기
@@ -181,6 +175,16 @@ class Preparation:
                 loan_df[[numeric_feature]]
             )
 
+    def _save_encoded_features(self, loan_df: pd.DataFrame):
+        print("loan_df 결과 저장 예정")
+        """
+        피처 데이터 저장
+        """
+        feature_file_name = f"{self._model_name}_{self._model_version}.csv"
+        loan_df.to_csv(f"{self._data_prepartion_path}/{feature_file_name}", index=False)
+
+    @staticmethod
+    def _transform_to_min_max_scale(loan_df: pd.DataFrame, numeric_features: List[str]):
         """
         Normalization (정규화)
         - min_max_scalers 불러오기
@@ -203,12 +207,24 @@ class Preparation:
                 loan_df[[numeric_feature]]
             )
 
-        print("loan_df 결과 저장 예정")
-        """
-        피처 데이터 저장
-        """
-        feature_file_name = f"{self._model_name}_{self._model_version}.csv"
-        loan_df.to_csv(f"{self._data_prepartion_path}/{feature_file_name}", index=False)
+    def preprocessing(self):
+        loan_df = self._get_features_extracted()
+
+        # 2. 데이터 전처리
+
+        self._fill_na_to_default(loan_df)
+        self._replace_category_to_numeric(loan_df)
+        loan_df = self._transform_to_one_hot_encoding(loan_df)
+        self._transform_to_label_encoding(loan_df)
+        numeric_features = [
+            "applicant_income",
+            "coapplicant_income",
+            "loan_amount_term",
+        ]
+        self._transform_to_standard_scale(loan_df, numeric_features)
+        self._transform_to_min_max_scale(loan_df, numeric_features)
+
+        self._save_encoded_features(loan_df)
 
 
 if __name__ == "__main__":
