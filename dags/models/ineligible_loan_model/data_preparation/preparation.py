@@ -42,6 +42,9 @@ class Preparation:
         """
         with engine.connect() as conn:
             loan_df = pd.read_sql(text(sql), con=conn)
+
+        if loan_df.empty is True:
+            raise ValueError("loan df is empty!")
         return loan_df
 
     @staticmethod
