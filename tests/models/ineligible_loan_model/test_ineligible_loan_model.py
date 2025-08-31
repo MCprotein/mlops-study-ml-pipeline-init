@@ -50,6 +50,19 @@ class TestIneligibleLoanModel(unittest.TestCase):
 
         preparation.preprocessing()
 
+    def test_data_preparation_of_dag_task(self):
+        import dags.models.ineligible_loan_model.ineligible_loan_model as model
+
+        # BashOperator의 속성들이 올바르게 설정되었는지 테스트
+        self.assertEqual(model.data_preparation.task_id, "데이터전처리")
+        self.assertIn("docker compose up --build", model.data_preparation.bash_command)
+        self.assertIn("docker compose down", model.data_preparation.bash_command)
+        
+        # 환경변수가 올바르게 설정되었는지 테스트
+        expected_env_keys = ["PYTHON_FILE", "MODEL_NAME", "MODEL_VERSION", "BASE_DAY"]
+        for key in expected_env_keys:
+            self.assertIn(key, model.data_preparation.env)
+
 
 if __name__ == "__main__":
     unittest.main()

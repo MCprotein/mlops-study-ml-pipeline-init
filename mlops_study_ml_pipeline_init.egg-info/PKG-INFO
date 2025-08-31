@@ -13,6 +13,7 @@ Requires-Dist: numpy==1.23.5
 Requires-Dist: pendulum>=3.1.0
 Requires-Dist: apache-airflow>=3.0.4
 Requires-Dist: apache-airflow-providers-mysql>=6.3.3
+Requires-Dist: apache-airflow-providers-docker>=4.4.2
 
 # mlops-study-ml-pipeline-init
 MLOps 구축 가이드북에서 실습을 진행하기 위해서 사용되며, Aiflow를 처음 접하는 실습자를 위해서 쉽게 standalone으로 구성할 수 있도록 제공되는 프로젝트이다.

@@ -80,6 +80,8 @@ x-airflow-common: &airflow-common
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
+    - /var/run/docker.sock:/var/run/docker.sock
+    - mlops_data_store:/home/mlops/mlops_data_store
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on: &airflow-common-depends-on
     redis:
@@ -343,6 +345,7 @@ services:
 
 volumes:
   postgres-db-volume:
+  mlops_data_store:
 
 networks:
   default:

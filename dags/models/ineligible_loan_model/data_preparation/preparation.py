@@ -246,3 +246,5 @@ if __name__ == "__main__":
     preparation = Preparation(
         model_name=_model_name, model_version=_model_version, base_day=_base_day
     )
+
+    preparation.preprocessing()
