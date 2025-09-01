@@ -3,6 +3,7 @@ LABEL maintainer="mlops.study@gmail.com"
 
 ARG USER_HOME=/home/mlops
 ARG PREPARATION_SOURCE_PATH=data_preparation
+ARG MODEL_SOURCE_PATH=model
 ARG MODEL_OUTPUT=model_output
 ARG REQUIREMENTS_PATH=docker
 
@@ -22,6 +23,8 @@ RUN groupadd --gid 1000 mlops \
 RUN mkdir -p ${USER_HOME}/data_preparation
 COPY --chown=mlops:mlops ${PREPARATION_SOURCE_PATH}/preparation.py \
     ${USER_HOME}/data_preparation/
+COPY --chown=mlops:mlops ${MODEL_SOURCE_PATH}/prediction.py \
+    ${USER_HOME}/model/
 COPY --chown=mlops:mlops ${MODEL_OUTPUT}/ \
     ${USER_HOME}/model_output/
 COPY --chown=mlops:mlops ${REQUIREMENTS_PATH}/pyproject.toml \

@@ -5,8 +5,6 @@ import joblib
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from dags.models.ineligible_loan_model.ineligible_loan_model import data_preparation
-
 feature_store_url = os.getenv("FEATURE_STORE_URL", "")
 model_output_home = os.getenv("MODEL_OUTPUT_HOME", "")
 mlops_data_store = os.getenv("MLOPS_DATA_STORE", "")
@@ -67,6 +65,8 @@ class Prediction:
     def _save_to_table(self, test_predicted: pd.DataFrame):
         from sqlalchemy import create_engine
         from sqlalchemy.engine import Engine
+
+        print(test_predicted, "test_predicted")
 
         engine: Engine = create_engine(feature_store_url)
         with engine.connect() as conn:
