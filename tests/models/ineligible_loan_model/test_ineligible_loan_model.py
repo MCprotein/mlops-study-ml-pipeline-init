@@ -101,7 +101,7 @@ class TestIneligibleLoanModel(unittest.TestCase):
 
     def test_prediction(self):
         import dags.models.ineligible_loan_model.ineligible_loan_model as model
-        from dags.models.ineligible_loan_model.prediction import Prediction
+        from dags.models.ineligible_loan_model.prediction.prediction import Prediction
 
         prediction = Prediction(
             model_name=model.model_name,

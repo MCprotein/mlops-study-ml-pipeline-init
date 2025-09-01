@@ -13,6 +13,7 @@ dags/models/ineligible_loan_model/data_extract/__init__.py
 dags/models/ineligible_loan_model/data_preparation/__init__.py
 dags/models/ineligible_loan_model/data_preparation/preparation.py
 dags/models/ineligible_loan_model/model_output/__init__.py
+dags/models/ineligible_loan_model/prediction/__init__.py
 dags/support/__init__.py
 dags/support/callback_function.py
 dags/support/date_values.py
