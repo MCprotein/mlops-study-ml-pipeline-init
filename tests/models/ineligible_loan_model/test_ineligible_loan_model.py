@@ -53,55 +53,23 @@ class TestIneligibleLoanModel(unittest.TestCase):
     def test_data_preparation_of_dag_task(self):
         import dags.models.ineligible_loan_model.ineligible_loan_model as model
 
-        # DockerOperator의 속성들이 올바르게 설정되었는지 테스트
-        self.assertEqual(model.data_preparation.task_id, "데이터전처리")
-        self.assertEqual(
-            model.data_preparation.image, "ineligible_loan_model:pipeline-latest"
+        env = {
+            "PYTHON_FILE": "/home/mlops/data_preparation/preparation.py",
+            "MODEL_NAME": model.model_name,
+            "MODEL_VERSION": model.model_version,
+            "BASE_DAY": self.base_day,
+        }
+        model.data_preparation.__setattr__("env", env)
+        model.data_preparation.container_name = f"test_data_preparation_{self.base_day}"
+        model.data_preparation.command = (
+            f"uv run python /home/mlops/data_preparation/preparation.py {model.model_name} "
+            f"{model.model_version} {self.base_day}"
         )
-        self.assertEqual(model.data_preparation.auto_remove, "success")
-        self.assertEqual(
-            model.data_preparation.docker_url, "unix://var/run/docker.sock"
-        )
-        self.assertEqual(model.data_preparation.network_mode, "mlops_study_network")
-        self.assertEqual(model.data_preparation.mount_tmp_dir, False)
-
-        # 환경변수가 올바르게 설정되었는지 테스트
-        expected_env_keys = [
-            "PYTHON_FILE",
-            "MODEL_NAME",
-            "MODEL_VERSION",
-            "BASE_DAY",
-            "PYTHONPATH",
-            "MLOPS_DATA_STORE",
-            "MODEL_OUTPUT_HOME",
-            "FEATURE_STORE_URL",
-        ]
-        for key in expected_env_keys:
-            self.assertIn(key, model.data_preparation.environment)
-
-        # 볼륨 마운트가 올바르게 설정되었는지 테스트
-        self.assertEqual(len(model.data_preparation.mounts), 1)
-        mount = model.data_preparation.mounts[0]
-        self.assertEqual(
-            mount["Source"], "mlops-study-ml-pipeline-init_mlops_data_store"
-        )
-        self.assertEqual(mount["Target"], "/home/mlops/mlops_data_store")
-        self.assertEqual(mount["Type"], "volume")
-
-        # 명령어가 올바르게 설정되었는지 테스트
-        if model.data_preparation.command:  # None 체크
-            expected_command_parts = [
-                "uv run python",
-                "/home/mlops/data_preparation/preparation.py",
-                "ineligible_loan_model",
-                "1.0.0",
-            ]
-            for part in expected_command_parts:
-                self.assertIn(part, model.data_preparation.command)
+        model.data_preparation.execute(self.context)
 
     def test_prediction(self):
         import dags.models.ineligible_loan_model.ineligible_loan_model as model
-        from dags.models.ineligible_loan_model.prediction.prediction import Prediction
+        from dags.models.ineligible_loan_model.model.prediction import Prediction
 
         prediction = Prediction(
             model_name=model.model_name,
@@ -110,6 +78,23 @@ class TestIneligibleLoanModel(unittest.TestCase):
         )
 
         prediction.predict()
+
+    def test_prediction_of_dag_task(self):
+        import dags.models.ineligible_loan_model.ineligible_loan_model as model
+
+        env = {
+            "PYTHON_FILE": "/home/mlops/model/prediction.py",
+            "MODEL_NAME": model.model_name,
+            "MODEL_VERSION": model.model_version,
+            "BASE_DAY": self.base_day,
+        }
+        model.prediction.__setattr__("env", env)
+        model.prediction.container_name = f"test_prediction_{self.base_day}"
+        model.prediction.command = (
+            f"uv run python /home/mlops/model/prediction.py {model.model_name} \
+          {model.model_version} {self.base_day}"
+        )
+        model.prediction.execute(self.context)
 
 
 if __name__ == "__main__":

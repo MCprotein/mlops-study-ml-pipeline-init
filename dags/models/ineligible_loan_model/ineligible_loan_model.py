@@ -71,12 +71,46 @@ with DAG(
             Mount(
                 source="mlops-study-ml-pipeline-init_mlops_data_store",
                 target="/home/mlops/mlops_data_store",
-                type="volume"
+                type="volume",
             )
         ],
-        command="uv run python /home/mlops/data_preparation/preparation.py " + model_name + " " + model_version + " {{ macros.ds_add(ds, -1) | replace('-', '') }}",
+        command="uv run python /home/mlops/data_preparation/preparation.py "
+        + model_name
+        + " "
+        + model_version
+        + " {{ macros.ds_add(ds, -1) | replace('-', '') }}",
     )
 
-    prediction = EmptyOperator(task_id="예측")
+    prediction = DockerOperator(
+        task_id="예측",
+        image="ineligible_loan_model:pipeline-latest",
+        container_name="ineligible_loan_model_pipeline_{{ ds_nodash }}_{{ ts_nodash }}",
+        auto_remove="success",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="mlops_study_network",
+        mount_tmp_dir=False,
+        environment={
+            "PYTHON_FILE": "/home/mlops/model/prediction.py",
+            "MODEL_NAME": model_name,
+            "MODEL_VERSION": model_version,
+            "BASE_DAY": "{{ macros.ds_add(ds, -1) | replace('-', '') }}",
+            "PYTHONPATH": "/home/mlops",
+            "MLOPS_DATA_STORE": "/home/mlops/mlops_data_store",
+            "MODEL_OUTPUT_HOME": "/home/mlops",
+            "FEATURE_STORE_URL": "mysql://root:root@mariadb/mlops",
+        },
+        mounts=[
+            Mount(
+                source="mlops-study-ml-pipeline-init_mlops_data_store",
+                target="/home/mlops/mlops_data_store",
+                type="volume",
+            )
+        ],
+        command="uv run python /home/mlops/model/prediction.py "
+        + model_name
+        + " "
+        + model_version
+        + " {{ macros.ds_add(ds, -1) | replace('-', '') }}",
+    )
 
     data_extract >> data_preparation >> prediction
