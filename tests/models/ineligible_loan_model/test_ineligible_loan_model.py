@@ -9,7 +9,8 @@ os.environ["FEATURE_STORE_URL"] = "mysql://root:root@mariadb/mlops"
 os.environ["MODEL_OUTPUT_HOME"] = str(
     Path(__file__).parent.parent.parent.parent / "dags/models/ineligible_loan_model"
 )
-home_dir = os.path.expanduser("~")
+# home_dir = os.path.expanduser("~")
+home_dir = "/home/mlops"
 os.environ["MLOPS_DATA_STORE"] = f"{home_dir}/mlops_data_store"
 
 

@@ -21,12 +21,20 @@ logs:
 test:
 	docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/ -v"
 
-# Run specific test file (usage: make test-unit test_data_extract)
+# Run specific test (usage: make unittest [ClassName.method_name or test_name])
+# Examples: 
+#   make unittest                                    # run all tests
+#   make unittest TestIneligibleLoanModel.test_data_extract   # run specific class.method
+#   make unittest TestIneligibleLoanModel            # run specific test class
 unittest:
 	@if [ -z "$(word 2,$(MAKECMDGOALS))" ]; then \
-		docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/models/ineligible_loan_model/test_ineligible_loan_model.py -v -s"; \
+		docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/ -v -s"; \
+	elif echo "$(word 2,$(MAKECMDGOALS))" | grep -q "\\."; then \
+		CLASS=$$(echo "$(word 2,$(MAKECMDGOALS))" | cut -d'.' -f1); \
+		METHOD=$$(echo "$(word 2,$(MAKECMDGOALS))" | cut -d'.' -f2); \
+		docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/ -k \"$$CLASS and $$METHOD\" -v -s"; \
 	else \
-		docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/models/ineligible_loan_model/test_ineligible_loan_model.py::TestIneligibleLoanModel::$(word 2,$(MAKECMDGOALS)) -v -s"; \
+		docker exec mlops-study-ml-pipeline-init-airflow-apiserver-1 bash -c "cd /opt/airflow && PYTHONPATH=/opt/airflow/dags:/opt/airflow python -m pytest tests/ -k \"$(word 2,$(MAKECMDGOALS))\" -v -s"; \
 	fi
 
 # Dummy target to handle test name argument

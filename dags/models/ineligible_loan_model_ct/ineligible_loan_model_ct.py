@@ -12,6 +12,7 @@ from dags.support.callback_function import failure_callback, success_callback
 
 local_timezone = pendulum.timezone("Asia/Seoul")
 conn_id = "feature_store"
+model_name = "ineligible_loan_model"
 dag_dir = Path(__file__).parent
 sql_file_path = dag_dir / "data_extract" / "features.sql"
 

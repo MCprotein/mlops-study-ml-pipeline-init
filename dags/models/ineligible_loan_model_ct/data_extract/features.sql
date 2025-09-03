@@ -17,7 +17,7 @@ select a.applicant_id
   from mlops.loan_applicant_info a left outer join
        mlops.cust_info           b on (    a.applicant_date = b.base_dt
                                        and a.cust_id = b.cust_id)
- where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') as start_date  and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d') as end_date
+ where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d')
 ;
 
 /** 2) 가족관련 피처 생성 */
@@ -33,7 +33,7 @@ select c.cust_id
           from mlops.loan_applicant_info a inner join
                mlops.family_info         b on (    a.applicant_date = b.base_dt
                                                and a.cust_id = b.cust_id)
-         where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') as start_date and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d') as end_date
+         where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d')
          group by a.cust_id
        ) c
 ;
@@ -70,7 +70,7 @@ select a.applicant_id
               ,b.registration_date
           from mlops.loan_default_account b
        ) b on (b.loan_account_id = a.loan_account_id)
- where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') as start_date and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d') as end_date
+ where a.applicant_date between CONCAT(DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -6 MONTH), '%Y%m'), '01') and DATE_FORMAT(LAST_DAY(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH)), '%Y%m%d')
 ;
 
 /** 5) 피처와 타겟 합치기 (모델 학습 최종 데이터)  */
@@ -95,7 +95,7 @@ select a.applicant_id
 /** 5) 피처와 타겟 합치기 (모델 학습 최종 데이터)  */
 DELETE
   FROM mlops.ineligible_loan_model_features_target
-WHERE base_ym = DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{ ds_nodash }}', '%Y%m%d'), INTERVAL -1 MONTH), '%Y%m')
+WHERE base_ym = DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH), '%Y%m')
 ;
 
 INSERT
@@ -115,7 +115,7 @@ INSERT
     ,property_area
     ,loan_status
   )
-SELECT DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{ ds_nodash }}', '%Y%m%d'), INTERVAL -1 MONTH), '%Y%m') as base_ym
+SELECT DATE_FORMAT(DATE_ADD(STR_TO_DATE('{{  ds_nodash  }}', '%Y%m%d'), INTERVAL -1 MONTH), '%Y%m') as base_ym
     ,a.applicant_id
     ,a.gender
     ,a.married
