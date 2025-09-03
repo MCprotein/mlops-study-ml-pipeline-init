@@ -5,7 +5,6 @@ import pendulum
 from airflow import DAG
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.docker.operators.docker import DockerOperator
-from airflow.providers.standard.operators.empty import EmptyOperator
 from docker.types import Mount
 from support.callback_function import failure_callback, success_callback
 
