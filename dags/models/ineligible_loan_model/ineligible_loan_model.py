@@ -59,7 +59,6 @@ with DAG(
         environment={
             "PYTHON_FILE": "/home/mlops/data_preparation/preparation.py",
             "MODEL_NAME": model_name,
-            "MODEL_VERSION": model_version,
             "BASE_DAY": "{{ macros.ds_add(ds, -1) | replace('-', '') }}",
             "PYTHONPATH": "/home/mlops",
             "MLOPS_DATA_STORE": "/home/mlops/mlops_data_store",

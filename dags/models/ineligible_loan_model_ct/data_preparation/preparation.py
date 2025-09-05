@@ -40,16 +40,21 @@ class Preparation:
 
         # 데이터 추출 결과 조회
         base_ym = DateValues.get_before_one_month(self._base_day)
+        print(f"Calculated base_ym: {base_ym} (type: {type(base_ym)})")
+        
         sql = f"""
         select *
           from mlops.ineligible_loan_model_features_target
-         where base_ym = '{base_ym}'
+         where base_ym = {base_ym}
         """
+        print(f"Executing SQL: {sql}")
+        
         with engine.connect() as conn:
             loan_df = pd.read_sql(text(sql), con=conn)
+            print(f"Query result count: {len(loan_df)}")
 
         if loan_df.empty is True:
-            raise ValueError("loan df is empty!")
+            raise ValueError(f"loan df is empty for base_ym: {base_ym}!")
         return loan_df
 
     @staticmethod

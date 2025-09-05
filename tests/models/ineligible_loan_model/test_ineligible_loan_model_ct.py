@@ -48,6 +48,26 @@ class TestIneligibleLoanModelCt(unittest.TestCase):
 
         preparation.preprocessing()
 
+    def test_data_preparation_of_dag_task(self):
+        import dags.models.ineligible_loan_model_ct.ineligible_loan_model_ct as model
+
+        env = {
+            "PYTHON_FILE": "/home/mlops/data_preparation/preparation.py",
+            "MODEL_NAME": "ineligible_loan_model",
+            "MODEL_VERSION": "1.0.0",
+            "BASE_DAY": "20250905",
+        }
+
+        model.data_preparation.__setattr__("env", env)
+        model.data_preparation.container_name = (
+            f"test_data_preparation_ct_{self.base_day}"
+        )
+        model.data_preparation.command = (
+            f"uv run python /home/mlops/data_preparation/preparation.py {model.model_name} "
+            f"{self.base_day}"
+        )
+        model.data_preparation.execute(self.context)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,9 +8,8 @@ from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
 from docker.types import Mount
-
-from dags.models.ineligible_loan_model.ineligible_loan_model import data_preparation
-from dags.support.callback_function import failure_callback, success_callback
+from models.ineligible_loan_model.ineligible_loan_model import data_preparation
+from support.callback_function import failure_callback, success_callback
 
 local_timezone = pendulum.timezone("Asia/Seoul")
 conn_id = "feature_store"
@@ -49,8 +48,8 @@ with DAG(
 
     data_preparation = DockerOperator(
         task_id="데이터전처리",
-        image="ineligible_loan_model:pipeline-latest",
-        container_name="ineligible_loan_model_pipeline_{{ ds_nodash }}_{{ ts_nodash }}",
+        image="ineligible_loan_model:pipeline-ct-latest",
+        container_name="ineligible_loan_model_ct_pipeline_{{ ds_nodash }}_{{ ts_nodash }}",
         auto_remove="success",
         docker_url="unix://var/run/docker.sock",
         network_mode="mlops_study_network",
@@ -69,7 +68,7 @@ with DAG(
                 source="mlops-study-ml-pipeline-init_mlops_data_store",
                 target="/home/mlops/mlops_data_store",
                 type="volume",
-            )
+            ),
         ],
         command="uv run python /home/mlops/data_preparation/preparation.py "
         + model_name
