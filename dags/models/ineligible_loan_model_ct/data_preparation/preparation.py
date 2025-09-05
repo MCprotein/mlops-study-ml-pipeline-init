@@ -6,7 +6,7 @@ import joblib
 import pandas as pd
 from sklearn.preprocessing._data import MinMaxScaler
 
-from dags.support.date_values import DateValues
+from support.date_values import DateValues
 
 feature_store_url = os.getenv("FEATURE_STORE_URL", "")
 model_output_home = os.getenv("MODEL_OUTPUT_HOME", "")
@@ -39,10 +39,11 @@ class Preparation:
         engine: Engine = create_engine(feature_store_url)
 
         # 데이터 추출 결과 조회
+        base_ym = DateValues.get_before_one_month(self._base_day)
         sql = f"""
         select *
           from mlops.ineligible_loan_model_features_target
-         where base_ym = '{self._base_day}'
+         where base_ym = '{base_ym}'
         """
         with engine.connect() as conn:
             loan_df = pd.read_sql(text(sql), con=conn)

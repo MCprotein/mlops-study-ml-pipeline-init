@@ -5,7 +5,9 @@ import pendulum
 from airflow import DAG
 from airflow.models import Variable
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
+from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
+from docker.types import Mount
 
 from dags.models.ineligible_loan_model.ineligible_loan_model import data_preparation
 from dags.support.callback_function import failure_callback, success_callback
@@ -45,7 +47,34 @@ with DAG(
         split_statements=True,
     )
 
-    data_preparation = EmptyOperator(task_id="데이터전처리")
+    data_preparation = DockerOperator(
+        task_id="데이터전처리",
+        image="ineligible_loan_model:pipeline-latest",
+        container_name="ineligible_loan_model_pipeline_{{ ds_nodash }}_{{ ts_nodash }}",
+        auto_remove="success",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="mlops_study_network",
+        mount_tmp_dir=False,
+        environment={
+            "PYTHON_FILE": "/home/mlops/data_preparation/preparation.py",
+            "MODEL_NAME": model_name,
+            "BASE_DAY": "{{ macros.ds_add(ds, -1) | replace('-', '') }}",
+            "PYTHONPATH": "/home/mlops",
+            "MLOPS_DATA_STORE": "/home/mlops/mlops_data_store",
+            "MODEL_OUTPUT_HOME": "/home/mlops",
+            "FEATURE_STORE_URL": "mysql://root:root@mariadb/mlops",
+        },
+        mounts=[
+            Mount(
+                source="mlops-study-ml-pipeline-init_mlops_data_store",
+                target="/home/mlops/mlops_data_store",
+                type="volume",
+            )
+        ],
+        command="uv run python /home/mlops/data_preparation/preparation.py "
+        + model_name
+        + " {{ macros.ds_add(ds, -1) | replace('-', '') }}",
+    )
 
     training = EmptyOperator(task_id="모델학습및모델평가")
 
