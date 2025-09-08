@@ -68,6 +68,22 @@ class TestIneligibleLoanModelCt(unittest.TestCase):
         )
         model.data_preparation.execute(self.context)
 
+    def test_training(self):
+        # Given
+        import dags.models.ineligible_loan_model_ct.ineligible_loan_model_ct as model
+        from dags.models.ineligible_loan_model_ct.model.training import Training
+
+        ct_model_version = "1.0.0"
+
+        # When
+        training = Training(
+            model_name=model.model_name,
+            model_version=ct_model_version,
+            base_day=self.base_ym,
+        )
+
+        training.train()
+
 
 if __name__ == "__main__":
     unittest.main()

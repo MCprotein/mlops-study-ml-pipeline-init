@@ -4,6 +4,7 @@ LABEL maintainer="mlops.study@gmail.com"
 ARG USER_HOME=/home/mlops
 ARG SUPPORT_SOURCE_PATH=support
 ARG PREPARATION_SOURCE_PATH=models/ineligible_loan_model_ct/data_preparation
+ARG MODEL_SOURCE_PATH=models/ineligible_loan_model_ct/model
 ARG REQUIREMENTS_PATH=models/ineligible_loan_model_ct/docker
 
 # Install system dependencies for mysqlclient
@@ -25,7 +26,6 @@ COPY --chown=mlops:mlops ${REQUIREMENTS_PATH}/pyproject.toml \
 COPY --chown=mlops:mlops ${REQUIREMENTS_PATH}/.python-version \
     ${USER_HOME}/
 
-USER mlops
 WORKDIR ${USER_HOME}
 
 # 종속성 설치 (캐시 활용)
@@ -36,6 +36,9 @@ COPY --chown=mlops:mlops ${SUPPORT_SOURCE_PATH}/ \
 ${USER_HOME}/support/
 COPY --chown=mlops:mlops ${PREPARATION_SOURCE_PATH}/preparation.py \
 ${USER_HOME}/data_preparation/
-RUN mkdir -p ${USER_HOME}/data_preparation ${USER_HOME}/mlops_data_store
+COPY --chown=mlops:mlops ${MODEL_SOURCE_PATH}/training.py \
+${USER_HOME}/model/
+RUN mkdir -p ${USER_HOME}/data_preparation ${USER_HOME}/mlops_data_store/model
 
+USER mlops
 WORKDIR ${USER_HOME}
